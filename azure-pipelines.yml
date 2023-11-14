@@ -14,10 +14,8 @@ variables:
   imageRepository: 'app1/nginx'
   containerRegistry: 'raiaksregistry.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
-  tag: '$(Build.BuildId)'
+  tag: '$(Build.SourceVersion)'
 
-  # Agent VM image name
-  vmImageName: 'SelfHosted'
 
 stages:
 - stage: Build
