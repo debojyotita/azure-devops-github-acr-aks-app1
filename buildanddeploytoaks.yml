@@ -43,14 +43,14 @@ stages:
     - upload: manifests
       artifact: manifests
 
-- stage: Deploy
-  displayName: Deploy stage
-  dependsOn: Build
+- stage: Deploy to dev
+  displayName: Deploy to dev namepsapce
+  dependsOn: Build 
 
   jobs:
-  - deployment: Deploy to dev
+  - deployment: Deploy
     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
-    displayName: Deploy to dev namespace
+    displayName: Deploy
     pool:
       name: SelfHosted
     environment: 'debojyotitaazuredevopsgithubacraksapp1.dev'
