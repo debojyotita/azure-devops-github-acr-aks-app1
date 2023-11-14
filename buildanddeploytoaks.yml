@@ -12,14 +12,11 @@ variables:
 
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '251f6d20-5e7c-4c56-a9b7-8206a2428a1d'
-  imageRepository: 'app1nginxwithaks'
+  imageRepository: 'app1/nginxwithaks'
   containerRegistry: 'raiaksregistry.azurecr.io'
   dockerfilePath: '**/Dockerfile'
   tag: '$(Build.BuildId)'
   imagePullSecret: 'raiaksregistry22776778-auth'
-
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
 
   # Name of the new namespace being created to deploy the PR changes.
   k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
@@ -51,9 +48,9 @@ stages:
   dependsOn: Build
 
   jobs:
-  - deployment: Deploy
+  - deployment: Deploy to dev
     condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
-    displayName: Deploy
+    displayName: Deploy to dev namespace
     pool:
       name: SelfHosted
     environment: 'debojyotitaazuredevopsgithubacraksapp1.dev'
@@ -80,39 +77,32 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-  - deployment: DeployPullRequest
-    displayName: Deploy Pull request
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/pull/'))
-    pool:
-      vmImage: $(vmImageName)
+- stage: Deploy to QA
+  displayName: Deploy to QA namespace
+  dependsOn: Deploy to dev
 
-    environment: 'debojyotitaazuredevopsgithubacraksapp1.$(k8sNamespaceForPR)'
+  jobs:
+  - deployment: Deploy
+    condition: and(succeeded(), not(startsWith(variables['Build.SourceBranch'], 'refs/pull/')))
+    displayName: Deploy
+    pool:
+      name: SelfHosted
+    environment: 'raiaks-qa-environment'
     strategy:
       runOnce:
         deploy:
           steps:
-          - reviewApp: dev
-
-          - task: Kubernetes@1
-            displayName: 'Create a new namespace for the pull request'
-            inputs:
-              command: apply
-              useConfigurationFile: true
-              inline: '{ "kind": "Namespace", "apiVersion": "v1", "metadata": { "name": "$(k8sNamespaceForPR)" }}'
-
           - task: KubernetesManifest@0
             displayName: Create imagePullSecret
             inputs:
               action: createSecret
               secretName: $(imagePullSecret)
-              namespace: $(k8sNamespaceForPR)
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
 
           - task: KubernetesManifest@0
-            displayName: Deploy to the new namespace in the Kubernetes cluster
+            displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
-              namespace: $(k8sNamespaceForPR)
               manifests: |
                 $(Pipeline.Workspace)/manifests/deployment.yml
                 $(Pipeline.Workspace)/manifests/service.yml
@@ -120,23 +110,3 @@ stages:
                 $(imagePullSecret)
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
-
-          - task: Kubernetes@1
-            name: get
-            displayName: 'Get services in the new namespace'
-            continueOnError: true
-            inputs:
-              command: get
-              namespace: $(k8sNamespaceForPR)
-              arguments: svc
-              outputFormat: jsonpath='http://{.items[0].status.loadBalancer.ingress[0].ip}:{.items[0].spec.ports[0].port}'
-
-          # Getting the IP of the deployed service and writing it to a variable for posing comment
-          - script: |
-              url="$(get.KubectlOutput)"
-              message="Your review app has been deployed"
-              if [ ! -z "$url" -a "$url" != "http://:" ]
-              then
-                message="${message} and is available at $url.<br><br>[Learn More](https://aka.ms/testwithreviewapps) about how to test and provide feedback for the app."
-              fi
-              echo "##vso[task.setvariable variable=GITHUB_COMMENT]$message"
