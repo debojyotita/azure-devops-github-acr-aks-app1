@@ -43,7 +43,7 @@ stages:
     - upload: manifests
       artifact: manifests
 
-- stage: Deploy to dev
+- stage: Deploy_to_dev
   displayName: Deploy to dev namepsapce
   dependsOn: Build 
 
@@ -77,9 +77,9 @@ stages:
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
 
-- stage: Deploy to QA
-  displayName: Deploy to QA namespace
-  dependsOn: Deploy to dev
+- stage: Deploy_to_test
+  displayName: Deploy to test namespace
+  dependsOn: Deploy_to_dev
 
   jobs:
   - deployment: Deploy
