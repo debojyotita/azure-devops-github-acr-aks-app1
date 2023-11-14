@@ -15,8 +15,8 @@ variables:
   imageRepository: 'app1/nginxwithaks'
   containerRegistry: 'raiaksregistry.azurecr.io'
   dockerfilePath: '**/Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'raiaksregistry22776778-auth'
+  tag: '$(Build.SourceVersion)'
+  imagePullSecret: 'raiaksregistry-image-pull-secret'
 
   # Name of the new namespace being created to deploy the PR changes.
   k8sNamespaceForPR: 'review-app-$(System.PullRequest.PullRequestId)'
@@ -91,14 +91,7 @@ stages:
     strategy:
       runOnce:
         deploy:
-          steps:
-          - task: KubernetesManifest@0
-            displayName: Create imagePullSecret
-            inputs:
-              action: createSecret
-              secretName: $(imagePullSecret)
-              dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
-
+          steps:         
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
