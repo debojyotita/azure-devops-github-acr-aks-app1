@@ -18,4 +18,4 @@ spec:
           ports:
           - containerPort: 80
       imagePullSecrets: #this secret is used to pull image while deploying
-        - name: raiaksregistry22776778-auth
+        - name: raiaksregistry-image-pull-secret
