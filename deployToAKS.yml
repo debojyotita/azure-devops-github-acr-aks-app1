@@ -122,7 +122,7 @@ stages:
 
 - stage: Deploy_to_staging
   displayName: Deploy to staging namepsapce
-  dependsOn: Deploy_to_test 
+  dependsOn: Deploy_to_dev
 
   jobs:
   - deployment: Deploy
