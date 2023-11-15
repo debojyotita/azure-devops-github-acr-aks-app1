@@ -17,5 +17,5 @@ spec:
           image: raiaksregistry.azurecr.io/app/nginx
           ports:
           - containerPort: 80
-      imagePullSecrets: #this secret is used to pull image while deploying
-        - name: raiaksregistry-image-pull-secret
+      #imagePullSecrets: #this secret is used to pull image while deploying , no need to declare here it is declared in the devops pipeline task
+        #- name: raiaksregistry-image-pull-secret
