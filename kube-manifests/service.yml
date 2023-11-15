@@ -1,1 +1,11 @@
-cv 
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx-app-loadbalancer-service
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 440
+      targetPort: 80
+    selector:
+        app: nginx-app
