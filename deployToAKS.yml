@@ -17,6 +17,17 @@ variables:
   tag: '$(Build.SourceVersion)'
   imagePullSecret: 'raiaksregistry-image-pull-secret'
 
+parameters:
+- name: deployToStaging
+  displayName: Run Staging deployment
+  type: boolean
+  default: false
+
+- name: deployToProd
+  displayName: Run Prod deployment
+  type: boolean
+  default: false
+
 
 stages:
 - stage: Build
@@ -122,6 +133,7 @@ stages:
                 $(containerRegistry)/$(imageRepository):$(tag)
               kubernetesServiceConnection: aks-test-env-rai-test-1700058521772
 
+- ${{ if eq(parameters.deployToStaging, true) }}:
 - stage: Deploy_to_staging
   displayName: Deploy to staging namepsapce
   dependsOn: Deploy_to_dev
@@ -158,6 +170,7 @@ stages:
                 $(containerRegistry)/$(imageRepository):$(tag)
               kubernetesServiceConnection: aks-staging-env-rai-staging-1700058551910
 
+- ${{ if eq(parameters.deployToProd, true) }}:
 - stage: Deploy_to_prod
   displayName: Deploy to prod namepsapce
   dependsOn: Deploy_to_staging
