@@ -159,7 +159,7 @@ stages:
               kubernetesServiceConnection: aks-staging-env-rai-staging-1700058551910
 
 - stage: Deploy_to_prod
-  displayName: Deploy to staging namepsapce
+  displayName: Deploy to prod namepsapce
   dependsOn: Deploy_to_staging
 
   jobs:
