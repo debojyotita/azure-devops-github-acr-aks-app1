@@ -1,1 +1,21 @@
-c 
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-app
+  template:
+    metadata:
+      labels:
+        app: nginx-app
+    spec:
+      containers:
+        - name: nginx 
+          image: raiaksregistry.azurecr.io/app/nginx
+          ports:
+          - containerPort: 80
+      imagePullSecrets: #this secret is used to pull image while deploying
+        - name: raiaksregistry-image-pull-secret
