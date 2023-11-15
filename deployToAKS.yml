@@ -71,14 +71,15 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)-dev
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              kubernetesServiceConnection: aks-dev-env-rai-dev-1700058482509
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/kube-manifests/deployment.yml
+                $(Pipeline.Workspace)/kube-manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)-dev
               containers: |
@@ -105,14 +106,15 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)-test
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              kubernetesServiceConnection: aks-test-env-rai-test-1700058521772
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/kube-manifests/deployment.yml
+                $(Pipeline.Workspace)/kube-manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)-test
               containers: |
@@ -139,14 +141,15 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)-staging
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              kubernetesServiceConnection: aks-staging-env-rai-staging-1700058551910
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/kube-manifests/deployment.yml
+                $(Pipeline.Workspace)/kube-manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)-staging
               containers: |
@@ -173,14 +176,15 @@ stages:
               action: createSecret
               secretName: $(imagePullSecret)-prod
               dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+              kubernetesServiceConnection: aks-prod-env-rai-prod-1700058579938
 
           - task: KubernetesManifest@0
             displayName: Deploy to Kubernetes cluster
             inputs:
               action: deploy
               manifests: |
-                $(Pipeline.Workspace)/manifests/deployment.yml
-                $(Pipeline.Workspace)/manifests/service.yml
+                $(Pipeline.Workspace)/kube-manifests/deployment.yml
+                $(Pipeline.Workspace)/kube-manifests/service.yml
               imagePullSecrets: |
                 $(imagePullSecret)-prod
               containers: |
