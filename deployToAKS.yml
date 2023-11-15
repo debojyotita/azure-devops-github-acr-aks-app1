@@ -84,6 +84,7 @@ stages:
                 $(imagePullSecret)-dev
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+              kubernetesServiceConnection: aks-dev-env-rai-dev-1700058482509
 
 - stage: Deploy_to_test
   displayName: Deploy to test namepsapce
@@ -119,6 +120,7 @@ stages:
                 $(imagePullSecret)-test
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+              kubernetesServiceConnection: aks-test-env-rai-test-1700058521772
 
 - stage: Deploy_to_staging
   displayName: Deploy to staging namepsapce
@@ -154,6 +156,7 @@ stages:
                 $(imagePullSecret)-staging
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+              kubernetesServiceConnection: aks-staging-env-rai-staging-1700058551910
 
 - stage: Deploy_to_prod
   displayName: Deploy to staging namepsapce
@@ -189,4 +192,5 @@ stages:
                 $(imagePullSecret)-prod
               containers: |
                 $(containerRegistry)/$(imageRepository):$(tag)
+              kubernetesServiceConnection: aks-prod-env-rai-prod-1700058579938
     
